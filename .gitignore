@@ -1,0 +1,5 @@
+names/
+.DS_Store
+*.json
+*.zip
+*.pyc
