@@ -1,25 +1,33 @@
 from nameClassifier import NameClassifier
+import json
 
 
 
-tree = {'rob': {'matt':None, 'tony':None, 'liz':None}, 'liz': {'bob':None, 'chris':None, 'jenn':None, 'melissa':None}}
+#tree = {'rob': {'matt':{}, 'tony':{}, 'liz':{}}, 'liz': {'bob':{}, 'chris':{}, 'jenn':{}, 'melissa':{}}}
+f = open('data/nameTree.json', 'r')
+tree = json.loads(f.read())
+f.close()
 
 nc = NameClassifier()
 nc.train()
-
+all_names = []
 tuples = []
+CLASSIFY_DEEP = False
 def classifyTree(node, depth=0):
   count={'M':0, 'F':0}
   if node:
     for name in node:
+      all_names.append(name)
       subCount = classifyTree(node[name], depth+1)
-      print '-'*depth, name, subCount
+      if sum(subCount.values())>0:
+        print '-'*depth, name, subCount
       label = nc.smartClassify(name)
       tuples.append((label, subCount))
       #print '-'*depth, name, label
       count[label] += 1
-      for k in count:
-        count[k] += subCount[k]
+      if CLASSIFY_DEEP:
+        for k in count:
+          count[k] += subCount[k]
   return count
 
 
@@ -28,12 +36,40 @@ print '\nTUPLES:'
 
 totals = {'M': {'M': 0, 'F': 0}, 'F': {'M': 0, 'F': 0} }
 for t in tuples:
-   print '-', t
+   #print '-', t
    for k in t[1]:
      totals[t[0]][k] += t[1][k]
-
-print '\nTOTALS: ' 
+print 'totals: ', totals
+print '\n\nTOTALS: '
+print 'ratio of genders working for a gender'
+pLikes = {}
 for t in totals:
   print t 
   print '- ', totals[t]
-  print '- like: %.0f%%' % (100*float(totals[t][t])/sum(totals[t].values()))
+  pLikes[t] = 100*float(totals[t][t])/sum(totals[t].values())
+  print '- like: %.2f%%' % (pLikes[t])
+
+
+print '\ntotal count: ', len(all_names)
+exists = {'M':0, 'F':0}
+for n in all_names:
+  label = nc.smartClassify(n)
+  exists[label] += 1
+pExists = {}
+for g in ['M', 'F']:
+  print g
+  print '- ', exists[g]
+  pExists[g] = 100*float(exists[g])/sum(exists.values())
+  print '- exist: %.2f%%' % (pExists[g])
+
+preference = {}
+print '\nPreference:', preference
+for g in pLikes:
+  preference[g] = pLikes[g]-pExists[g]
+  print '- ', g
+  print '- preference: %.2f%%' % (preference[g])
+
+
+
+
+

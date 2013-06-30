@@ -48,9 +48,10 @@ class NameClassifier(object):
     return accuracy
 
 
-  def classifyName(self, name):
-    pc = self.classifier.prob_classify(self.__getFeatures(n))
-    print 'Bayes Classification: ', pc.max(), pc.prob(pc.max())
+  def classifyName(self, name, verbose=False):
+    pc = self.classifier.prob_classify(self.__getFeatures(name))
+    if verbose:
+      print 'Bayes for name: ', name, 'classification: ', pc.max(), pc.prob(pc.max())
     return pc.max()
 
   """ classify based on dictionay of names, or fallback on bayes if name doesn't exist"""
@@ -64,7 +65,7 @@ class NameClassifier(object):
         print 'name existed. Classified as: ', label, ' confidence: ', confidence, ' count: ', sum(counts)
       return label
     else:
-      return self.classifyName(name)
+      return self.classifyName(name, verbose)
 
 
     
