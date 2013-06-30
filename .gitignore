@@ -5,3 +5,4 @@ names/
 *.pyc
 data
 *.swp
+*.csv

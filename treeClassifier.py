@@ -33,12 +33,17 @@ def classifyTree(node, depth=0):
 
 print classifyTree(tree)
 print '\nTUPLES:'
-
+f = open('tuples.csv', 'w')
 totals = {'M': {'M': 0, 'F': 0}, 'F': {'M': 0, 'F': 0} }
 for t in tuples:
-   #print '-', t
-   for k in t[1]:
-     totals[t[0]][k] += t[1][k]
+  if sum(t[1].values())>0:
+    line = "%s,%i,%i" % (t[0], t[1]['M'], t[1]['F'])
+    f.write(line + '\n')
+    print line
+  for k in t[1]:
+    totals[t[0]][k] += t[1][k]
+f.close()
+
 print 'totals: ', totals
 print '\n\nTOTALS: '
 print 'ratio of genders working for a gender'
@@ -62,14 +67,10 @@ for g in ['M', 'F']:
   pExists[g] = 100*float(exists[g])/sum(exists.values())
   print '- exist: %.2f%%' % (pExists[g])
 
-preference = {}
-print '\nPreference:', preference
+bias = {}
+print '\nBias:'
 for g in pLikes:
-  preference[g] = pLikes[g]-pExists[g]
+  bias[g] = pLikes[g]-pExists[g]
   print '- ', g
-  print '- preference: %.2f%%' % (preference[g])
-
-
-
-
+  print '- bias: %.2f%%' % (bias[g])
 
