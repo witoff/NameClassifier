@@ -1,6 +1,7 @@
 from nameLoader import NameLoader
 from nltk import NaiveBayesClassifier as nbc, classify
 import random
+import sys
 
 class NameClassifier(object):
   
@@ -53,15 +54,18 @@ class NameClassifier(object):
     return pc.max()
 
   """ classify based on dictionay of names, or fallback on bayes if name doesn't exist"""
-  def smartClassify(self, name):
+  def smartClassify(self, name, verbose=False):
     name = name.lower()
     if name in self.names:
       label = 'M' if self.names[name]['M'] > self.names[name]['F'] else 'F'
       counts = [self.names[name]['M'], self.names[name]['F']]
       confidence = float(max(counts))/sum(counts)
-      print 'name existed. Classified as: ', label, ' confidence: ', confidence
+      if verbose:
+        print 'name existed. Classified as: ', label, ' confidence: ', confidence, ' count: ', sum(counts)
+      return label
     else:
-      self.classifyName(name)
+      return self.classifyName(name)
+
 
     
 
@@ -70,7 +74,11 @@ if __name__ == '__main__':
   nc.train()
   nc.test()
 
-  names = ['rob', 'robert', 'roberta', 'sharon', 'Michael', 'Michelle', 'robtony', 'taifun']
+  names = ['rob', 'robert', 'roberta', 'sharon', 'Michael', 'Michelle', 'robtony', 'taifun', 'tomas']
+  # Add any extra names input on the command line
+  for n in sys.argv[1:]:
+    names.append(n)
+  
   for n in names:
     print '\n', n
     nc.smartClassify(n)

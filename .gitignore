@@ -3,3 +3,5 @@ names/
 *.json
 *.zip
 *.pyc
+data
+*.swp
